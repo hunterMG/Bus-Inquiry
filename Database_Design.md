@@ -28,3 +28,4 @@ _Primary Key_： **RouteID StopID**
 |UserName|varchar(20) ||
 |email   |varchar(50) ||
 |pswd    |char(32)||
+|isAdmin |bit||
