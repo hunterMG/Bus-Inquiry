@@ -1,10 +1,13 @@
 <?php
 $host = "localhost";
-$user = "id2064581_ubus";
-$pswd = "mY_1099";
-$db = "id2064581_bus_inquiry";
+$user = "root";
+$pswd = "yg789";
+$db = "Bus_Inquiry";
 
 $mysqli = new mysqli($host, $user, $pswd, $db);
+$mysqli->set_charset("utf8");
+$mysqli->query("set names 'utf8'");
+
 // if(!$mysqli){
 //     echo 'can not connect!';
 // }else{
