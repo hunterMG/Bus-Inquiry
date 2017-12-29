@@ -4,4 +4,15 @@
     <string name="title_route">Route</string>
     <string name="title_stop">Stop</string>
     <string name="title_more">More</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="tv_start">Start:</string>
+    <string name="tv_end">End:</string>
+    <string name="btn_search">Search</string>
+    <string name="tv_route">Route:</string>
+    <string name="et_start_hint">type your starting point here</string>
+    <string name="et_end_hint">type your end point here</string>
+    <string name="et_route_hint">type route name here</string>
+    <string name="tv_stop">Stop:</string>
+    <string name="ev_stop_hint">type stop name here</string>
 </resources>
