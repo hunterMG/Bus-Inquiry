@@ -4,7 +4,6 @@
               android:layout_height="match_parent"
               tools:context="top.ygdays.bus_inquiry.fragment.StopFragment" android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -33,11 +32,11 @@
 
         </LinearLayout>
         <Button
-                android:text="@string/btn_search"
+                android:background="@drawable/search_btn_selector"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:id="@+id/search_button"/>
+                android:id="@+id/btn_search_stop"/>
 
     </LinearLayout>
     <LinearLayout

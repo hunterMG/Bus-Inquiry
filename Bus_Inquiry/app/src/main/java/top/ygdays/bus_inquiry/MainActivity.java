@@ -8,16 +8,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import top.ygdays.bus_inquiry.fragment.RouteFragment;
 import top.ygdays.bus_inquiry.fragment.StopFragment;
 import top.ygdays.bus_inquiry.fragment.TransferFragment;
 
 public class MainActivity extends AppCompatActivity implements TransferFragment.OnFragmentInteractionListener,RouteFragment.OnFragmentInteractionListener,StopFragment.OnFragmentInteractionListener{
-
-    private TextView mTextMessage;
-    private FrameLayout transferLayout;
 
     private TransferFragment transferFragment;
     private RouteFragment routeFragment;

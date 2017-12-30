@@ -26,7 +26,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/tv_start"/>
                 <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:hint="@string/et_start_hint"/>
+                          android:hint="@string/et_start_hint" android:id="@+id/et_start"/>
 
             </LinearLayout>
             <LinearLayout
@@ -39,17 +39,17 @@
                         android:layout_height="wrap_content"
                         android:text="@string/tv_end"/>
                 <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:hint="@string/et_end_hint"/>
+                          android:hint="@string/et_end_hint" android:id="@+id/et_end"/>
 
             </LinearLayout>
 
         </LinearLayout>
         <Button
-                android:text="@string/btn_search"
+                android:background="@drawable/search_btn_selector"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:id="@+id/search_button"/>
+                android:id="@+id/btn_search_transfer"/>
 
     </LinearLayout>
     <LinearLayout

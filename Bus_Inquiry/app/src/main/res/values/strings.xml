@@ -5,7 +5,6 @@
     <string name="title_stop">Stop</string>
     <string name="title_more">More</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="tv_start">Start:</string>
     <string name="tv_end">End:</string>
     <string name="btn_search">Search</string>
@@ -15,4 +14,6 @@
     <string name="et_route_hint">type route name here</string>
     <string name="tv_stop">Stop:</string>
     <string name="ev_stop_hint">type stop name here</string>
+    <string name="toast_route_succeed">Route query succeeded.</string>
+    <string name="toast_route_fail">Route query failed.</string>
 </resources>

@@ -3,12 +3,25 @@ package top.ygdays.bus_inquiry.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONException;
+import org.json.JSONObject;
 import top.ygdays.bus_inquiry.R;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import top.ygdays.bus_inquiry.net.RouteRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +42,10 @@ public class RouteFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private EditText et_route;
+    private Button btn_search_route;
+    private Context mContext;
 
     public RouteFragment() {
         // Required empty public constructor
@@ -55,6 +72,7 @@ public class RouteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();   // get the context of the fragment
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -105,5 +123,47 @@ public class RouteFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        et_route = (EditText) view.findViewById(R.id.et_route);
+        btn_search_route = (Button) view.findViewById(R.id.btn_search_route);
+        // set the click listener for the button to query a route
+        btn_search_route.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String routeName = et_route.getText().toString().trim();
+                // resolve the route query result
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.i("route", response);
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean success = jsonResponse.getBoolean("success");
+                            if(success){
+                                Toast.makeText(mContext, R.string.toast_route_succeed, Toast.LENGTH_LONG).show();
+                                TextView v = new TextView(mContext);
+                                v.setText(jsonResponse.getString("route"));
+                                Log.i("route", "succeed");
+                            }else {
+                                Toast.makeText(mContext, R.string.toast_route_fail, Toast.LENGTH_LONG).show();
+                                Log.i("route", "fail");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                };
+                RouteRequest routeRequest = new RouteRequest(routeName, responseListener);
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                requestQueue.add(routeRequest);
+                Log.i("route" , "route query has been launched (name: "+routeName+") ");
+            }
+        });
     }
 }

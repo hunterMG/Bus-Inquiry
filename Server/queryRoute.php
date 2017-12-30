@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 class ResultRoute{
     public $success;
     public $num_route;
@@ -19,12 +20,12 @@ class Route{
     }
 }
 
-// $routeName = $_POST["routeName"];
-$routeName = "r1";
+$routeName = $_POST["routeName"];
+// $routeName = "r1";
 require 'db.php';   //create a mysql connection--'$mysqli'
 $response = array();
 $resultRoute = new ResultRoute();
-$sql = "select * from `Route` where `RouteName` = '$routeName';";
+$sql = "select * from `Route` where `RouteName` like '%".$routeName."%';";
 if($result = $mysqli->query($sql)){
     $resultRoute->success = true;
     $resultRoute->num_route = $result->num_rows;

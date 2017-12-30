@@ -4,8 +4,6 @@
               android:layout_height="match_parent"
               tools:context="top.ygdays.bus_inquiry.fragment.RouteFragment" android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -27,18 +25,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tv_route"/>
-                <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:hint="@string/et_route_hint"/>
+                <EditText
+                        android:id="@+id/et_route"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/et_route_hint"/>
 
             </LinearLayout>
 
         </LinearLayout>
         <Button
-                android:text="@string/btn_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:id="@+id/search_button"/>
+                android:id="@+id/btn_search_route"
+                android:background="@drawable/search_btn_selector"/>
 
     </LinearLayout>
     <LinearLayout
