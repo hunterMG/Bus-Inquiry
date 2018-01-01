@@ -16,4 +16,8 @@
     <string name="ev_stop_hint">type stop name here</string>
     <string name="toast_route_succeed">Route query succeeded.</string>
     <string name="toast_route_fail">Route query failed.</string>
+    <string name="toast_0_route">No result found. Change the route name and search again.</string>
+    <string name="price">Price: ¥</string>
+    <string name="start_time">Strart Time: </string>
+    <string name="end_time">End Time: </string>
 </resources>

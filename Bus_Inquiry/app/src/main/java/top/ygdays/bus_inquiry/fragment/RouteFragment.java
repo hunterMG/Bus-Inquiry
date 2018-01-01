@@ -3,25 +3,29 @@ package top.ygdays.bus_inquiry.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.ArrayMap;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import top.ygdays.bus_inquiry.R;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import top.ygdays.bus_inquiry.data.Route;
 import top.ygdays.bus_inquiry.net.RouteRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +49,7 @@ public class RouteFragment extends Fragment {
 
     private EditText et_route;
     private Button btn_search_route;
+    private ExpandableListView routeExpandableListView;
     private Context mContext;
 
     public RouteFragment() {
@@ -126,44 +131,156 @@ public class RouteFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         et_route = (EditText) view.findViewById(R.id.et_route);
-        btn_search_route = (Button) view.findViewById(R.id.btn_search_route);
-        // set the click listener for the button to query a route
-        btn_search_route.setOnClickListener(new View.OnClickListener() {
+        et_route.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View v) {
-
-                String routeName = et_route.getText().toString().trim();
-                // resolve the route query result
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            Log.i("route", response);
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
-                            if(success){
-                                Toast.makeText(mContext, R.string.toast_route_succeed, Toast.LENGTH_LONG).show();
-                                TextView v = new TextView(mContext);
-                                v.setText(jsonResponse.getString("route"));
-                                Log.i("route", "succeed");
-                            }else {
-                                Toast.makeText(mContext, R.string.toast_route_fail, Toast.LENGTH_LONG).show();
-                                Log.i("route", "fail");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                };
-                RouteRequest routeRequest = new RouteRequest(routeName, responseListener);
-                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-                requestQueue.add(routeRequest);
-                Log.i("route" , "route query has been launched (name: "+routeName+") ");
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER){
+                    hideSoftKeyboard(view);
+                    searchRoute(view);
+                }
+                return false;
             }
         });
+        et_route.requestFocus();
+    }
+    /*
+     * Search route use "POST" method(volley)
+     */
+    public void searchRoute(final View view){
+        String routeName = et_route.getText().toString().trim();
+        // resolve the route query result
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("route", response);
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if(success){
+                        Toast.makeText(mContext, R.string.toast_route_succeed, Toast.LENGTH_SHORT).show();
+                        Log.i("route", "succeed");
+                        int num_route = jsonResponse.getInt("num_route");
+                        if(num_route > 0){
+                            JSONArray routeJsonArray = jsonResponse.getJSONArray("route");
+                            // parse json to Route
+                            List<Route> routeList = new ArrayList<>();
+                            for (int i = 0; i<num_route; i++) {
+                                JSONObject jObj = routeJsonArray.getJSONObject(i);
+                                JSONArray jsonStopsArray = jObj.getJSONArray("Stops");
+                                List<String> Stops = new ArrayList<>();
+                                for(int j = 0; j<jsonStopsArray.length(); j++){
+                                    Stops.add(jsonStopsArray.get(j).toString());
+                                }
+                                Route route = new Route(jObj.getInt("RouteID"), jObj.getString("RouteName"), jObj.getDouble("Price"), jObj.getString("StartTime"), jObj.getString("EndTime"), jObj.getString("StartStop"), jObj.getString("EndStop"), jObj.getInt("StopNum"), Stops);
+                                routeList.add(route);
+                                Log.i("routeArray", routeJsonArray.get(i).toString());
+                            }
+                            //Display routes in ExpandableListView
+                            displayRoutes(routeList, view);
+                            Route r = routeList.get(0);
+                            Log.i("route", r.toString());
+                        }else {
+                            Toast.makeText(mContext, R.string.toast_0_route, Toast.LENGTH_LONG).show();
+                        }
+                    }else {
+                        Toast.makeText(mContext, R.string.toast_route_fail, Toast.LENGTH_SHORT).show();
+                        Log.i("route", "fail");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        RouteRequest routeRequest = new RouteRequest(routeName, responseListener);
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        requestQueue.add(routeRequest);
+        Log.i("route" , "route query has been launched (name: "+routeName+") ");
+    }
+    /*
+     * Display routes returned by server in routeExpandableListView
+     */
+    public void displayRoutes(final List<Route> routeList, View view){
+        final ExpandableListAdapter routeAdapter = new BaseExpandableListAdapter() {
+            @Override
+            public int getGroupCount() {
+                return routeList.size();
+            }
+
+            @Override
+            public int getChildrenCount(int groupPosition) {
+                return 4;// Stops, startTime, endTime, price
+            }
+
+            @Override
+            public Object getGroup(int groupPosition) {
+                return routeList.get(groupPosition).RouteName;
+            }
+
+            @Override
+            public Object getChild(int groupPosition, int childPosition) {
+                if(childPosition == 0){
+                    return getString(R.string.title_stop)+":"+routeList.get(groupPosition).Stops.toString();
+                }
+                else if(childPosition == 1)
+                    return getString(R.string.start_time)+routeList.get(groupPosition).StartTime;
+                else if(childPosition == 2)
+                    return getString(R.string.end_time)+routeList.get(groupPosition).EndTime;
+                else return getString(R.string.price)+routeList.get(groupPosition).Price;
+            }
+
+            @Override
+            public long getGroupId(int groupPosition) {
+                return groupPosition;
+            }
+
+            @Override
+            public long getChildId(int groupPosition, int childPosition) {
+                return childPosition;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+
+            @Override
+            public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+                LinearLayout ll = new LinearLayout(mContext);
+                ll.setOrientation(1);
+                TextView tv_RouteName = new TextView(mContext);
+                tv_RouteName.setTextSize(20);
+                tv_RouteName.setText(routeList.get(groupPosition).RouteName);
+                ll.addView(tv_RouteName);
+                TextView tv_stops = new TextView(mContext);
+                tv_stops.setText(routeList.get(groupPosition).Stops.toString());
+                tv_stops.setSingleLine();
+                ll.addView(tv_stops);
+                return ll;
+            }
+
+            @Override
+            public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+                TextView textView = new TextView(mContext);
+                textView.setText(getChild(groupPosition, childPosition).toString());
+                return textView;
+            }
+
+            @Override
+            public boolean isChildSelectable(int groupPosition, int childPosition) {
+                return true;
+            }
+        };
+
+        routeExpandableListView = (ExpandableListView) view.findViewById(R.id.route_ExpandableListView);
+        routeExpandableListView.setAdapter(routeAdapter);
+    }
+    public void hideSoftKeyboard(View view){
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        IBinder iBinder = view.getWindowToken();
+        imm.hideSoftInputFromWindow(iBinder,InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }

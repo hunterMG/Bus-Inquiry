@@ -29,17 +29,12 @@
                         android:id="@+id/et_route"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/et_route_hint"/>
+                        android:hint="@string/et_route_hint" android:singleLine="true"
+                        android:imeOptions="actionSearch"/>
 
             </LinearLayout>
 
         </LinearLayout>
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:id="@+id/btn_search_route"
-                android:background="@drawable/search_btn_selector"/>
 
     </LinearLayout>
     <LinearLayout
@@ -47,6 +42,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
+        <ExpandableListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/route_ExpandableListView"/>
     </LinearLayout>
 
 </LinearLayout>
