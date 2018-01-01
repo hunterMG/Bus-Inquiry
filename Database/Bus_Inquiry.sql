@@ -10,7 +10,8 @@ CREATE TABLE if not EXISTS `Route`(
 	`RouteName` VARCHAR(20) NOT NULL,
 	`Price` FLOAT not null,
 	`StartTime` time NOT null,
-	`EndTime` time NOT null
+	`EndTime` time NOT null,
+	`StopNum` int NOT NULL
 );
 CREATE table if not EXISTS `Route_Stop`(
 	`RouteID` SMALLINT UNSIGNED,
@@ -40,12 +41,12 @@ insert into `Stop`(`StopName`) VALUES ('s8');
 insert into `Stop`(`StopName`) VALUES ('s9');
 insert into `Stop`(`StopName`) VALUES ('s10');
 
-INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`) 
-	VALUES ('r1', 1, '6:00:00', '22:00:00');
-INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`) 
-	VALUES ('r2', 1, '6:00:00', '22:00:00');
-INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`) 
-	VALUES ('r3', 2, '6:30:00', '22:30:00');
+INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`, `StopNum`) 
+	VALUES ('r1', 1, '6:00:00', '22:00:00', 5);
+INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`, `StopNum`) 
+	VALUES ('r2', 1, '6:00:00', '22:00:00', 4);
+INSERT into `Route`(`RouteName`, `Price`, `StartTime`, `EndTime`, `StopNum`) 
+	VALUES ('r3', 2, '6:30:00', '22:30:00', 3);
 
 insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(1, 1, 1);
 insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(1, 2, 2);

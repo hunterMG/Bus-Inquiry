@@ -12,6 +12,7 @@
 |Price      |float       ||
 |StartTime  |time        ||
 |EndTime    |time        ||
+|StopNum    |int         ||
 
 ## Route_Stop
 |Column Name    |Type   |   |
