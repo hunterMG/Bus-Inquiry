@@ -3,12 +3,31 @@ package top.ygdays.bus_inquiry.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.Toast;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import top.ygdays.bus_inquiry.R;
+import top.ygdays.bus_inquiry.Util;
+import top.ygdays.bus_inquiry.data.Route;
+import top.ygdays.bus_inquiry.net.RouteRequest;
+import top.ygdays.bus_inquiry.net.StopRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +48,10 @@ public class StopFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private EditText et_stop;
+    private Context mContext;
+    private ExpandableListView stopExpandableListView;
 
     public StopFragment() {
         // Required empty public constructor
@@ -55,6 +78,7 @@ public class StopFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -105,5 +129,61 @@ public class StopFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        stopExpandableListView = (ExpandableListView) view.findViewById(R.id.stop_ExpandableListView);
+        et_stop = (EditText) view.findViewById(R.id.et_stop);
+        et_stop.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER){
+                    Util.hideSoftKeyboard(view);
+                    searchStop(view);
+                }
+                return false;
+            }
+        });
+        et_stop.requestFocus();
+    }
+
+    public void searchStop(final View view){
+        String stopName = et_stop.getText().toString().trim();
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("STOP", response);
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if(success){
+                        Toast.makeText(mContext, R.string.toast_route_succeed, Toast.LENGTH_SHORT).show();
+                        Log.i("STOP", "succeed");
+                        int num_route = jsonResponse.getInt("num_route");
+                        if(num_route > 0){
+                            // parse json to Route
+                            List<Route> routeList = Util.getRouteList(jsonResponse);
+                            //Display routes in ExpandableListView
+                            Util.displayRoutes(routeList, view, mContext, stopExpandableListView);
+                            Route r = routeList.get(0);
+                            Log.i("STOP", r.toString());
+                        }else {
+                            Toast.makeText(mContext, R.string.toast_0_route, Toast.LENGTH_LONG).show();
+                        }
+                    }else {
+                        Toast.makeText(mContext, R.string.toast_route_fail, Toast.LENGTH_SHORT).show();
+                        Log.i("STOP", "fail");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        StopRequest stopRequest = new StopRequest(stopName, responseListener);
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        requestQueue.add(stopRequest);
+        Log.i("STOP" , "stop query has been launched (name: "+stopName+") ");
     }
 }

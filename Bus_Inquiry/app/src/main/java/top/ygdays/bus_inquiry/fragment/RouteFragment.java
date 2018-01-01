@@ -21,6 +21,7 @@ import top.ygdays.bus_inquiry.R;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import top.ygdays.bus_inquiry.Util;
 import top.ygdays.bus_inquiry.data.Route;
 import top.ygdays.bus_inquiry.net.RouteRequest;
 
@@ -138,13 +139,14 @@ public class RouteFragment extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == KeyEvent.KEYCODE_ENTER){
-                    hideSoftKeyboard(view);
+                    Util.hideSoftKeyboard(view);
                     searchRoute(view);
                 }
                 return false;
             }
         });
         et_route.requestFocus();
+        routeExpandableListView = (ExpandableListView) view.findViewById(R.id.route_ExpandableListView);
     }
     /*
      * Search route use "POST" method(volley)
@@ -164,22 +166,9 @@ public class RouteFragment extends Fragment {
                         Log.i("route", "succeed");
                         int num_route = jsonResponse.getInt("num_route");
                         if(num_route > 0){
-                            JSONArray routeJsonArray = jsonResponse.getJSONArray("route");
-                            // parse json to Route
-                            List<Route> routeList = new ArrayList<>();
-                            for (int i = 0; i<num_route; i++) {
-                                JSONObject jObj = routeJsonArray.getJSONObject(i);
-                                JSONArray jsonStopsArray = jObj.getJSONArray("Stops");
-                                List<String> Stops = new ArrayList<>();
-                                for(int j = 0; j<jsonStopsArray.length(); j++){
-                                    Stops.add(jsonStopsArray.get(j).toString());
-                                }
-                                Route route = new Route(jObj.getInt("RouteID"), jObj.getString("RouteName"), jObj.getDouble("Price"), jObj.getString("StartTime"), jObj.getString("EndTime"), jObj.getString("StartStop"), jObj.getString("EndStop"), jObj.getInt("StopNum"), Stops);
-                                routeList.add(route);
-                                Log.i("routeArray", routeJsonArray.get(i).toString());
-                            }
+                            List<Route> routeList = Util.getRouteList(jsonResponse);
                             //Display routes in ExpandableListView
-                            displayRoutes(routeList, view);
+                            Util.displayRoutes(routeList, view, mContext, routeExpandableListView);
                             Route r = routeList.get(0);
                             Log.i("route", r.toString());
                         }else {
@@ -200,87 +189,5 @@ public class RouteFragment extends Fragment {
         requestQueue.add(routeRequest);
         Log.i("route" , "route query has been launched (name: "+routeName+") ");
     }
-    /*
-     * Display routes returned by server in routeExpandableListView
-     */
-    public void displayRoutes(final List<Route> routeList, View view){
-        final ExpandableListAdapter routeAdapter = new BaseExpandableListAdapter() {
-            @Override
-            public int getGroupCount() {
-                return routeList.size();
-            }
 
-            @Override
-            public int getChildrenCount(int groupPosition) {
-                return 4;// Stops, startTime, endTime, price
-            }
-
-            @Override
-            public Object getGroup(int groupPosition) {
-                return routeList.get(groupPosition).RouteName;
-            }
-
-            @Override
-            public Object getChild(int groupPosition, int childPosition) {
-                if(childPosition == 0){
-                    return getString(R.string.title_stop)+":"+routeList.get(groupPosition).Stops.toString();
-                }
-                else if(childPosition == 1)
-                    return getString(R.string.start_time)+routeList.get(groupPosition).StartTime;
-                else if(childPosition == 2)
-                    return getString(R.string.end_time)+routeList.get(groupPosition).EndTime;
-                else return getString(R.string.price)+routeList.get(groupPosition).Price;
-            }
-
-            @Override
-            public long getGroupId(int groupPosition) {
-                return groupPosition;
-            }
-
-            @Override
-            public long getChildId(int groupPosition, int childPosition) {
-                return childPosition;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return true;
-            }
-
-            @Override
-            public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-                LinearLayout ll = new LinearLayout(mContext);
-                ll.setOrientation(1);
-                TextView tv_RouteName = new TextView(mContext);
-                tv_RouteName.setTextSize(20);
-                tv_RouteName.setText(routeList.get(groupPosition).RouteName);
-                ll.addView(tv_RouteName);
-                TextView tv_stops = new TextView(mContext);
-                tv_stops.setText(routeList.get(groupPosition).Stops.toString());
-                tv_stops.setSingleLine();
-                ll.addView(tv_stops);
-                return ll;
-            }
-
-            @Override
-            public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-                TextView textView = new TextView(mContext);
-                textView.setText(getChild(groupPosition, childPosition).toString());
-                return textView;
-            }
-
-            @Override
-            public boolean isChildSelectable(int groupPosition, int childPosition) {
-                return true;
-            }
-        };
-
-        routeExpandableListView = (ExpandableListView) view.findViewById(R.id.route_ExpandableListView);
-        routeExpandableListView.setAdapter(routeAdapter);
-    }
-    public void hideSoftKeyboard(View view){
-        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        IBinder iBinder = view.getWindowToken();
-        imm.hideSoftInputFromWindow(iBinder,InputMethodManager.HIDE_NOT_ALWAYS);
-    }
 }

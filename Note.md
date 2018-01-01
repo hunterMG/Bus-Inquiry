@@ -14,3 +14,10 @@ change Button image when it is pressed (selector file)
 [Click `Enter` of the soft keyboard for search](http://blog.csdn.net/lucky_bo/article/details/50771054?ref=myread)  
 [Hide SoftKeyboard in fragment](https://stackoverflow.com/questions/7940765/how-to-hide-the-soft-keyboard-from-inside-a-fragment)(the 4th answer)  
 [ExpandableListView](http://blog.csdn.net/sysukehan/article/details/51960473)  
+Avoid soft keyboard change the layout(EditText):
+```xml
+<activity
+    android:name=".MainActivity"
+    android:windowSoftInputMode="stateVisible|adjustPan"
+    android:label="@string/app_name">
+```
