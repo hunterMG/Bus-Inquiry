@@ -3,14 +3,24 @@ package top.ygdays.bus_inquiry.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.*;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import top.ygdays.bus_inquiry.R;
+import top.ygdays.bus_inquiry.Util;
+import top.ygdays.bus_inquiry.net.TransferRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +38,9 @@ public class TransferFragment extends Fragment {
 
     private EditText et_start;
     private EditText et_end;
-    private Button btn_search;
-
+    private Button btn_exchange;
+    private Context mContext;
+    private ExpandableListView transfer_ExpandableListView;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -61,6 +72,7 @@ public class TransferFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -111,5 +123,154 @@ public class TransferFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        et_start = (EditText) view.findViewById(R.id.et_start);
+        et_end = (EditText) view.findViewById(R.id.et_end);
+        btn_exchange = (Button) view.findViewById(R.id.btn_exchange);
+        transfer_ExpandableListView = (ExpandableListView) view.findViewById(R.id.transfer_ExpandableListView);
+        btn_exchange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str1 = et_start.getText().toString();
+                String str2 = et_end.getText().toString();
+                et_start.setText(str2);
+                et_end.setText(str1);
+            }
+        });
+        et_start.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER){
+                    Util.hideSoftKeyboard(view);
+                    searchTransfer();
+                }
+                return false;
+            }
+        });
+        et_end.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER){
+                    Util.hideSoftKeyboard(view);
+                    searchTransfer();
+                }
+                return false;
+            }
+        });
+    }
+    public void searchTransfer(){
+        String startStop = et_start.getText().toString().trim();
+        String endStop = et_end.getText().toString().trim();
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("Transfer", response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    if(jsonObject.getBoolean("success") == true){
+                        int num_route = jsonObject.getInt("num_route");
+                        Toast.makeText(mContext, R.string.toast_transfer_succeed, Toast.LENGTH_SHORT).show();
+                        JSONArray jsonArray = jsonObject.getJSONArray("routes");
+                        displayTransferList(jsonArray);
+                    }else {
+                        Toast.makeText(mContext, R.string.toast_transfer_fail, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        TransferRequest transferRequest = new TransferRequest(startStop, endStop, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+        queue.add(transferRequest);
+    }
+    public void displayTransferList(final JSONArray jsonArray){
+        Log.i("Transfer", jsonArray.toString());
+        ExpandableListAdapter routesAdapter = new BaseExpandableListAdapter() {
+            @Override
+            public int getGroupCount() {
+                return jsonArray.length();
+            }
+
+            @Override
+            public int getChildrenCount(int groupPosition) {
+                return 1;
+            }
+
+            @Override
+            public Object getGroup(int groupPosition) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = jsonArray.getJSONObject(groupPosition);
+                    String routeName = jsonObject.getString("routeName");
+                    int num_stop = jsonObject.getInt("num_stop");
+                    if(num_stop == 1){
+                        return routeName+" ("+num_stop+" "+getString(R.string.single_stop)+") ";
+                    }else {
+                        return routeName+" ("+num_stop+" "+getString(R.string.multi_stop)+") ";
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public Object getChild(int groupPosition, int childPosition) {
+                if (childPosition == 0){
+                    try {
+                        JSONObject jsonObject = jsonArray.getJSONObject(groupPosition);
+                        JSONArray jsonArray1 = jsonObject.getJSONArray("stops");
+                        Log.i("TransferStops", jsonArray1.toString());
+                        return getString(R.string.multi_stop)+": "+jsonArray1.toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }else {
+                    return null;
+                }
+            }
+
+            @Override
+            public long getGroupId(int groupPosition) {
+                return groupPosition;
+            }
+
+            @Override
+            public long getChildId(int groupPosition, int childPosition) {
+                return childPosition;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+
+            @Override
+            public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+                TextView textView = new TextView(mContext);
+                textView.setText(getGroup(groupPosition).toString());
+                textView.setTextSize(20);
+                return textView;
+            }
+
+            @Override
+            public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+                TextView textView = new TextView(mContext);
+                textView.setText(getChild(groupPosition, childPosition).toString());
+                return textView;
+            }
+
+            @Override
+            public boolean isChildSelectable(int groupPosition, int childPosition) {
+                return true;
+            }
+        };
+        transfer_ExpandableListView.setAdapter(routesAdapter);
     }
 }

@@ -20,4 +20,8 @@
     <string name="price">Price: ¥</string>
     <string name="start_time">Strart Time: </string>
     <string name="end_time">End Time: </string>
+    <string name="toast_transfer_succeed">Transfer query succeed.</string>
+    <string name="toast_transfer_fail">No result found, change the stop name and search again.</string>
+    <string name="single_stop">stop</string>
+    <string name="multi_stop">stops</string>
 </resources>

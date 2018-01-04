@@ -60,3 +60,95 @@ insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(2, 4, 8);
 insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(3, 1, 8);
 insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(3, 2, 9);
 insert into `Route_Stop`(`RouteID`, `Position`, `StopID`) VALUES(3, 3, 10);
+
+CREATE VIEW Through
+as 
+	SELECT 
+		RS1.`RouteID` as `RouteID`,
+		RS1.`StopID` as `StartID`, 
+		RS2.`StopID` `EndID`,
+		RS2.`Position` - RS1.`Position` as `StopNum`
+	from `Route_Stop` RS1, `Route_Stop` RS2
+	WHERE RS1.`RouteID` = RS2.`RouteID` and RS1.`Position` < RS2.`Position`;
+
+SELECT * from Through;
+-- show PROCEDURE STATUS;
+show CREATE PROCEDURE transferThrough;
+
+DROP PROCEDURE if EXISTS transferThrough;
+DELIMITER ;;
+CREATE PROCEDURE transferThrough(in startstop VARCHAR(20), in endstop VARCHAR(20), out routeName1 VARCHAR(20))
+begin
+	DECLARE startID int;
+	DECLARE endID int;
+	DECLARE routeID1 int;
+	SELECT `StopID` INTO startID from `Stop` WHERE `StopName` = startstop;
+	SELECT `StopID` INTO endID from `Stop` WHERE `StopName` = endstop;
+	SELECT RS1.`RouteID` into routeID1 from `Route_Stop` RS1,`Route_Stop` RS2 WHERE RS1.`RouteID` = RS2.`RouteID` and RS1.`StopID` = startID and RS2.`StopID` = endID and RS1.`Position`<RS2.`Position`;
+	SELECT `RouteName` into routeName1 from `Route` WHERE `RouteID` = routeID1;
+	SELECT routeName1;
+END
+;;
+DELIMITER ;
+
+call transferThrough('s1', 's4', @routeName1);
+
+DROP PROCEDURE if EXISTS transfer1;
+DELIMITER ;;
+CREATE PROCEDURE transfer1(in startstop VARCHAR(32), in endstop VARCHAR(32), 
+	out routeName1 VARCHAR(32), out transStop1 VARCHAR(32), out routeName2 VARCHAR(32))
+BEGIN
+	DECLARE startID int;
+	DECLARE endID int;
+	DECLARE routeID1 int;
+	DECLARE transID1 int;
+	DECLARE routeID2 int;
+	SELECT `StopID` INTO startID from `Stop` WHERE `StopName` = startstop;
+	SELECT `StopID` INTO endID from `Stop` WHERE `StopName` = endstop;
+	SELECT t1.`RouteID`, t1.`EndID`, t2.`RouteID` into routeID1,transID1,routeID2
+		from `Through` t1, `Through` t2 
+		WHERE t1.`StartID` = startID and t2.`EndID` = endID AND
+			t1.`EndID` = t2.`StartID`;
+	SELECT `RouteName` into routeName1 from `Route` where `RouteID` = routeID1;
+	SELECT `StopName` into transStop1 from `Stop` where `StopID` = transID1;
+	SELECT `RouteName` INTO routeName2 from `Route` where `RouteID` = routeID2;
+	SELECT routeName1,transStop1,routeName2;
+END
+;;
+DELIMITER ;
+
+call transfer1('s1', 's8', @routeName1, @transStop1, @routeName2);
+
+SELECT `RouteID` from `Route` where `RouteName` = 'r1';
+
+DROP PROCEDURE if EXISTS transfer2;
+DELIMITER ;;
+CREATE PROCEDURE transfer2(in startstop VARCHAR(32), in endstop VARCHAR(32), 
+	out routeName1 VARCHAR(32), out transStop1 VARCHAR(32), out routeName2 VARCHAR(32), 
+	out transStop2 VARCHAR(32), out routeName3 VARCHAR(32) )
+BEGIN
+	DECLARE startID int;
+	DECLARE endID int;
+	DECLARE routeID1 int;
+	DECLARE transID1 int;
+	DECLARE routeID2 int;
+	DECLARE transID2 int;
+	DECLARE routeID3 int;
+	SELECT `StopID` INTO startID from `Stop` WHERE `StopName` = startstop;
+	SELECT `StopID` INTO endID from `Stop` WHERE `StopName` = endstop;
+	SELECT t1.`RouteID`, t1.`EndID`, t2.`RouteID`, t2.`EndID`,  t3.`RouteID` into routeID1,transID1,routeID2,transID2,routeID3
+		from `Through` t1, `Through` t2, `Through` t3
+		WHERE t1.`StartID` = startID and t3.`EndID` = endID AND
+			t1.`EndID` = t2.`StartID` and t2.`EndID` = t3.`StartID`;
+	SELECT `RouteName` into routeName1 from `Route` where `RouteID` = routeID1;
+	SELECT `StopName` into transStop1 from `Stop` where `StopID` = transID1;
+	SELECT `RouteName` INTO routeName2 from `Route` where `RouteID` = routeID2;
+	SELECT `StopName` into transStop2 from `Stop` where `StopID` = transID2;
+	SELECT `RouteName` INTO routeName3 from `Route` where `RouteID` = routeID3;
+
+	SELECT routeName1,transStop1,routeName2,transStop2,routeName3;
+END
+;;
+DELIMITER ;
+
+call transfer2('s1', 's9', @routeName1, @transStop1, @routeName2, @transStop2, @routeName3);
