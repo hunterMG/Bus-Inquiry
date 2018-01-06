@@ -18,6 +18,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import top.ygdays.bus_inquiry.MainActivity;
 import top.ygdays.bus_inquiry.R;
 import top.ygdays.bus_inquiry.Util;
 import top.ygdays.bus_inquiry.net.TransferRequest;
@@ -128,6 +129,7 @@ public class TransferFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Util.hideSoftKeyboard(view);
         et_start = (EditText) view.findViewById(R.id.et_start);
         et_end = (EditText) view.findViewById(R.id.et_end);
         btn_exchange = (Button) view.findViewById(R.id.btn_exchange);
@@ -185,8 +187,8 @@ public class TransferFragment extends Fragment {
             }
         };
         TransferRequest transferRequest = new TransferRequest(startStop, endStop, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(mContext);
-        queue.add(transferRequest);
+//        RequestQueue queue = Volley.newRequestQueue(mContext);
+        MainActivity.requestQueue.add(transferRequest);
     }
     public void displayTransferList(final JSONArray jsonArray){
         Log.i("Transfer", jsonArray.toString());

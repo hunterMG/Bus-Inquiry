@@ -12,6 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import top.ygdays.bus_inquiry.data.Route;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,9 @@ import java.util.List;
  * @Date: Created in 下午10:17 2018/1/1
  */
 public class Util {
+    /*
+     * get a list of routes from a JSONObject
+     */
     public static List<Route> getRouteList(JSONObject jsonObject) throws JSONException {
         JSONArray routeJsonArray = jsonObject.getJSONArray("route");
         Log.i("STOPROUTE", routeJsonArray.toString());
@@ -120,5 +126,32 @@ public class Util {
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         IBinder iBinder = view.getWindowToken();
         imm.hideSoftInputFromWindow(iBinder,InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    /*
+     * MD5 encryption (32 bit)
+     */
+    public static String getMD5Str(String str) {
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(str.getBytes("UTF-8"));
+            byte[] encryption = md5.digest();
+
+            StringBuffer strBuf = new StringBuffer();
+            for (int i = 0; i < encryption.length; i++) {
+                if (Integer.toHexString(0xff & encryption[i]).length() == 1) {
+                    strBuf.append("0").append(
+                            Integer.toHexString(0xff & encryption[i]));
+                } else {
+                    strBuf.append(Integer.toHexString(0xff & encryption[i]));
+                }
+            }
+
+            return strBuf.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return "";
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
     }
 }

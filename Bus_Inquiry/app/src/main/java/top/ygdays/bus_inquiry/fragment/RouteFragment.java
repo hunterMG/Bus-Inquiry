@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import top.ygdays.bus_inquiry.MainActivity;
 import top.ygdays.bus_inquiry.R;
 
 import com.android.volley.RequestQueue;
@@ -185,8 +186,8 @@ public class RouteFragment extends Fragment {
             }
         };
         RouteRequest routeRequest = new RouteRequest(routeName, responseListener);
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-        requestQueue.add(routeRequest);
+//        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        MainActivity.requestQueue.add(routeRequest);
         Log.i("route" , "route query has been launched (name: "+routeName+") ");
     }
 

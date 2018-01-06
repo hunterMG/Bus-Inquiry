@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import top.ygdays.bus_inquiry.MainActivity;
 import top.ygdays.bus_inquiry.R;
 import top.ygdays.bus_inquiry.Util;
 import top.ygdays.bus_inquiry.data.Route;
@@ -182,8 +183,8 @@ public class StopFragment extends Fragment {
             }
         };
         StopRequest stopRequest = new StopRequest(stopName, responseListener);
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-        requestQueue.add(stopRequest);
+//        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        MainActivity.requestQueue.add(stopRequest);
         Log.i("STOP" , "stop query has been launched (name: "+stopName+") ");
     }
 }

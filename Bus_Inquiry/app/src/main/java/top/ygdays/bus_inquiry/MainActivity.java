@@ -1,5 +1,6 @@
 package top.ygdays.bus_inquiry;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,18 +8,26 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import top.ygdays.bus_inquiry.fragment.MoreFragment;
 import top.ygdays.bus_inquiry.fragment.RouteFragment;
 import top.ygdays.bus_inquiry.fragment.StopFragment;
 import top.ygdays.bus_inquiry.fragment.TransferFragment;
 
-public class MainActivity extends AppCompatActivity implements TransferFragment.OnFragmentInteractionListener,RouteFragment.OnFragmentInteractionListener,StopFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements TransferFragment.OnFragmentInteractionListener,RouteFragment.OnFragmentInteractionListener,StopFragment.OnFragmentInteractionListener,MoreFragment.OnFragmentInteractionListener{
 
     private TransferFragment transferFragment;
     private RouteFragment routeFragment;
     private StopFragment stopFragment;
+    private MoreFragment moreFragment;
 
     private FragmentManager fragmentManager;
+
+    public static RequestQueue requestQueue;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -49,8 +58,19 @@ public class MainActivity extends AppCompatActivity implements TransferFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestQueue = Volley.newRequestQueue(MainActivity.this);
+        Preference.init(getApplicationContext());
+
         fragmentManager = getSupportFragmentManager();
-        setChoiceItem(0);
+
+        Intent intent = getIntent();
+        String email = intent.getStringExtra("email");
+        if(email != null){
+            Log.i("intent", email);
+            setChoiceItem(3);
+        }else {
+            setChoiceItem(0);
+        }
         //        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -70,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements TransferFragment.
         }
         if(stopFragment != null){
             fragmentTransaction.hide(stopFragment);
+        }
+        if(moreFragment != null){
+            fragmentTransaction.hide(moreFragment);
         }
     }
 
@@ -102,11 +125,11 @@ public class MainActivity extends AppCompatActivity implements TransferFragment.
                 }
                 break;
             case 3:
-                if(transferFragment == null){
-                    transferFragment = new TransferFragment();
-                    fragmentTransaction.add(R.id.content, transferFragment);
+                if(moreFragment == null){
+                    moreFragment = new MoreFragment();
+                    fragmentTransaction.add(R.id.content, moreFragment);
                 }else {
-                    fragmentTransaction.show(transferFragment);
+                    fragmentTransaction.show(moreFragment);
                 }
                 break;
         }

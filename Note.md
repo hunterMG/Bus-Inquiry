@@ -19,9 +19,10 @@ Avoid soft keyboard change the layout(EditText):
 ```xml
 <activity
     android:name=".MainActivity"
-    android:windowSoftInputMode="stateVisible|adjustPan"
+    android:windowSoftInputMode="adjustPan"
     android:label="@string/app_name">
 ```
+[LoginActivity and AsyncTask](http://blog.csdn.net/jasonkent27/article/details/40590891)  
 ## MySQL
 [Procedure](https://www.cnblogs.com/chenpi/p/5136483.html)  
 [SELECT INTO](https://www.cnblogs.com/rooney/archive/2012/03/09/2387732.html)  

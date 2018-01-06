@@ -152,3 +152,5 @@ END
 DELIMITER ;
 
 call transfer2('s1', 's9', @routeName1, @transStop1, @routeName2, @transStop2, @routeName3);
+
+insert into `User` (`email`, `pswd`, `isAdmin`) VALUES('wml@1.com', MD5(MD5(11112222)), 1);
