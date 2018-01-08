@@ -1,9 +1,11 @@
 package top.ygdays.bus_inquiry.fragment;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,15 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.EditText;
+import android.widget.*;
 import com.android.volley.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import top.ygdays.bus_inquiry.*;
 import top.ygdays.bus_inquiry.net.AddStopRequest;
+import top.ygdays.bus_inquiry.net.ModifyStopRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +42,9 @@ public class MoreFragment extends Fragment {
     private Context mContext;
     private Button btn_logout;
     private TextView tv_add_stop;
+    private Button btn_modify_stop;
+    private AlertDialog.Builder modifyStopDialog;
+    private LinearLayout modifyStopLL;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -166,6 +169,63 @@ public class MoreFragment extends Fragment {
             btn_login.setVisibility(View.INVISIBLE);
         }
         tv_email.setText(email);
+
+        btn_modify_stop = (Button) view.findViewById(R.id.btn_modify_stop);
+        btn_modify_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!Preference.isAdmin()) {
+                    Toast.makeText(mContext, R.string.toast_login_hint, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                modifyStopLL = new LinearLayout(mContext);
+                modifyStopLL.setOrientation(1);
+                final EditText et_old_stop = new EditText(mContext);
+                et_old_stop.setHint(R.string.old_stop_hint);
+                et_old_stop.setSingleLine();
+                modifyStopLL.addView(et_old_stop);
+                final EditText et_new_stop = new EditText(mContext);
+                et_new_stop.setHint(R.string.new_stop_hint);
+                et_new_stop.setSingleLine();
+                modifyStopLL.addView(et_new_stop);
+
+                DialogInterface.OnClickListener modifyStopDialogListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newStopName = et_new_stop.getText().toString().trim();
+                        String oldStopName = et_old_stop.getText().toString().trim();
+                        if(newStopName.isEmpty() || oldStopName.isEmpty()){
+                            Toast.makeText(mContext, R.string.toast_stop_name_empty, Toast.LENGTH_SHORT).show();
+
+                        }else {
+                            Response.Listener<String> rl = new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        if (jsonObject.getBoolean("success")){
+                                            Toast.makeText(mContext, R.string.toast_modify_stop_succeed, Toast.LENGTH_SHORT).show();
+                                        }else {
+                                            Toast.makeText(mContext, R.string.toast_modify_stop_fail, Toast.LENGTH_SHORT).show();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            };
+                            ModifyStopRequest msr = new ModifyStopRequest(oldStopName, newStopName, rl);
+                            MainActivity.requestQueue.add(msr);
+                        }
+                    }
+                };
+                modifyStopDialog =  new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.btn_modify_stop)
+                        .setView(modifyStopLL)
+                        .setPositiveButton(R.string.ok, modifyStopDialogListener)
+                        .setNegativeButton(R.string.cancel, null);
+                modifyStopDialog.show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
