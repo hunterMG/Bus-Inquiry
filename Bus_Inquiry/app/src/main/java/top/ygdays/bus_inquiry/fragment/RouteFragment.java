@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.*;
@@ -140,8 +141,12 @@ public class RouteFragment extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == KeyEvent.KEYCODE_ENTER){
-                    Util.hideSoftKeyboard(view);
-                    searchRoute(view);
+                    if(!TextUtils.isEmpty(et_route.getText())){
+                        Util.hideSoftKeyboard(view);
+                        searchRoute(view);
+                    }else {
+                        et_route.requestFocus();
+                    }
                 }
                 return false;
             }

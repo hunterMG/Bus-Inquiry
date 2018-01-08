@@ -18,8 +18,9 @@ public class Preference {
         editor = sharedPreferences.edit();
     }
 
-    public static void setUserInfo(String email){
+    public static void setUserInfo(String email, boolean isAdmin){
         editor.putString("email", email);
+        editor.putBoolean("isAdmin", isAdmin);
         editor.commit();
     }
 
@@ -27,15 +28,20 @@ public class Preference {
         return sharedPreferences.getString("email", "null");
     }
 
-    public static Boolean isLoggedin(){
+    public static boolean isLoggedin(){
         if(sharedPreferences.getString("email", "null") != "null"){
             return true;
         }
         return false;
     }
 
+    public static boolean isAdmin(){
+        return sharedPreferences.getBoolean("isAdmin", false);
+    }
+
     public static void logout(){
         editor.putString("email", "null");
+        editor.putBoolean("isAdmin", false);
         editor.commit();
     }
 }

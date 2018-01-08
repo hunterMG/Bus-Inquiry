@@ -40,5 +40,16 @@
     <string name="user_not_exist">This user is not exist!</string>
     <string name="toast_register_success">Register succeeded! You can login now.</string>
     <string name="toast_register_fail">Register failed! The user already exists.</string>
-
+    <string name="btn_logout">Log out</string>
+    <string name="toast_logout_success">You have logged out.</string>
+    <string name="btn_update_stop">Update stop</string>
+    <string name="btn_add_stop">Add stop</string>
+    <string name="btn_delete_stop">Delete stop</string>
+    <string name="toast_login_hint">Please login as administrator first!</string>
+    <string name="title_add_stop">Input the stop name to add:</string>
+    <string name="toast_add_stop_succeed">Add Stop Succeed!</string>
+    <string name="toast_add_stop_fail">Add Stop Fail! Change the stop name and try again.</string>
+    <string name="toast_stop_name_empty">Stop Name can\'t be empty!</string>
+    <string name="Add">Add</string>
+    <string name="cancel">cancel</string>
 </resources>

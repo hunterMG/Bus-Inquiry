@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         JSONObject jsonObject = new JSONObject(response);
                         if(jsonObject.getBoolean("authenticated")){
 //                            Util.hideSoftKeyboard(mProgressView);
-                            Preference.setUserInfo(email);
+                            Preference.setUserInfo(email, jsonObject.getBoolean("isAdmin"));
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);

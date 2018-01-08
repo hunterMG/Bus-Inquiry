@@ -1,21 +1,27 @@
 package top.ygdays.bus_inquiry.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.TextView;
-import top.ygdays.bus_inquiry.LoginActivity;
-import top.ygdays.bus_inquiry.R;
-import top.ygdays.bus_inquiry.Preference;
-import top.ygdays.bus_inquiry.Util;
+import android.widget.Toast;
+import android.widget.EditText;
+import com.android.volley.Response;
+import org.json.JSONException;
+import org.json.JSONObject;
+import top.ygdays.bus_inquiry.*;
+import top.ygdays.bus_inquiry.net.AddStopRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +39,9 @@ public class MoreFragment extends Fragment {
 
     private Button btn_login;
     private TextView tv_email;
+    private Context mContext;
+    private Button btn_logout;
+    private TextView tv_add_stop;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,6 +74,7 @@ public class MoreFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -82,12 +92,51 @@ public class MoreFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tv_email = (TextView)view.findViewById(R.id.tv_email);
-        String email = Preference.getUserInfo();
-        if(email != "null"){
-            tv_email.setText(email);
-        }else {
-            tv_email.setText(email);
-        }
+        tv_add_stop = (TextView)view.findViewById(R.id.tv_add_stop);
+        tv_add_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Preference.isAdmin()){
+                    final EditText et_stopname = new EditText(mContext);
+                    et_stopname.setSingleLine();
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(R.string.title_add_stop)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setView(et_stopname)
+                            .setPositiveButton(R.string.Add, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String stopName = et_stopname.getText().toString().trim();
+                                    if(stopName.isEmpty()){
+                                        Toast.makeText(mContext, R.string.toast_stop_name_empty, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    Response.Listener<String> rl = new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(response);
+                                                if(jsonObject.getBoolean("success")){
+                                                    Toast.makeText(mContext, R.string.toast_add_stop_succeed, Toast.LENGTH_SHORT).show();
+                                                }else {
+                                                    Toast.makeText(mContext, R.string.toast_add_stop_fail, Toast.LENGTH_SHORT).show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    };
+                                    AddStopRequest asr = new AddStopRequest(stopName, rl);
+                                    MainActivity.requestQueue.add(asr);
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show();
+                }else {
+                    Toast.makeText(mContext, R.string.toast_login_hint, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         btn_login = (Button)view.findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +145,27 @@ public class MoreFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        btn_logout = (Button) view.findViewById(R.id.btn_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Preference.logout();
+                btn_login.setVisibility(View.VISIBLE);
+                btn_logout.setVisibility(View.INVISIBLE);
+                Toast.makeText(mContext, R.string.toast_logout_success, Toast.LENGTH_SHORT).show();
+                tv_email.setText(Preference.getUserInfo());
+            }
+        });
         Util.hideSoftKeyboard(view);
+
+        String email = Preference.getUserInfo();
+        Log.i("Email", email);
+        if(email.equals("null")){
+            btn_logout.setVisibility(View.INVISIBLE);
+        }else {
+            btn_login.setVisibility(View.INVISIBLE);
+        }
+        tv_email.setText(email);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
