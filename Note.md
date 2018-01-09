@@ -23,11 +23,11 @@ Avoid soft keyboard change the layout(EditText):
     android:label="@string/app_name">
 ```
 [LoginActivity and AsyncTask](http://blog.csdn.net/jasonkent27/article/details/40590891)  
-[SharedPreference](http://blog.csdn.net/zhang31jian/article/details/23258065)
-[Volley](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0526/2934.html)
-[Dialog](http://blog.csdn.net/chenlei1889/article/details/6267406)
-[boundary](https://www.cnblogs.com/yue31313/p/7687058.html)
+[SharedPreference](http://blog.csdn.net/zhang31jian/article/details/23258065)  
+[Volley](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0526/2934.html)  
+[Dialog](http://blog.csdn.net/chenlei1889/article/details/6267406)  
+[boundary](https://www.cnblogs.com/yue31313/p/7687058.html)  
 ## MySQL
 [Procedure](https://www.cnblogs.com/chenpi/p/5136483.html)  
 [SELECT INTO](https://www.cnblogs.com/rooney/archive/2012/03/09/2387732.html)  
-
+[Cursor](http://shitou521.iteye.com/blog/1069027)

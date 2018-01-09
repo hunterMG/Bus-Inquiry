@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import top.ygdays.bus_inquiry.*;
 import top.ygdays.bus_inquiry.net.AddStopRequest;
+import top.ygdays.bus_inquiry.net.DeleteStopRequest;
 import top.ygdays.bus_inquiry.net.ModifyStopRequest;
 
 /**
@@ -45,6 +46,7 @@ public class MoreFragment extends Fragment {
     private Button btn_modify_stop;
     private AlertDialog.Builder modifyStopDialog;
     private LinearLayout modifyStopLL;
+    private Button btn_del_stop;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -131,6 +133,51 @@ public class MoreFragment extends Fragment {
                                     };
                                     AddStopRequest asr = new AddStopRequest(stopName, rl);
                                     MainActivity.requestQueue.add(asr);
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show();
+                }else {
+                    Toast.makeText(mContext, R.string.toast_login_hint, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btn_del_stop = (Button)view.findViewById(R.id.btn_del_stop);
+        btn_del_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Preference.isAdmin()){
+                    final EditText et_stopname = new EditText(mContext);
+                    et_stopname.setSingleLine();
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(R.string.title_del_stop)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setView(et_stopname)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String stopName = et_stopname.getText().toString().trim();
+                                    if(stopName.isEmpty()){
+                                        Toast.makeText(mContext, R.string.toast_stop_name_empty, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    Response.Listener<String> rl = new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(response);
+                                                if(jsonObject.getBoolean("success")){
+                                                    Toast.makeText(mContext, R.string.toast_del_stop_succeed, Toast.LENGTH_SHORT).show();
+                                                }else {
+                                                    Toast.makeText(mContext, R.string.toast_del_stop_fail, Toast.LENGTH_SHORT).show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    };
+                                    DeleteStopRequest dsr = new DeleteStopRequest(stopName, rl);
+                                    MainActivity.requestQueue.add(dsr);
                                 }
                             })
                             .setNegativeButton(R.string.cancel, null)

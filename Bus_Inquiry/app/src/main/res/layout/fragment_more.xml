@@ -62,6 +62,16 @@
                 android:textSize="20dp"
                 android:gravity="center_vertical"
                 android:textAllCaps="false"/>
+
+        <Button
+                android:text="@string/btn_delete_stop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_del_stop"
+                android:background="@drawable/boundary"
+                android:textSize="20dp"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"/>
     </LinearLayout>
 
 </LinearLayout>

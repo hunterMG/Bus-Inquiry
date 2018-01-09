@@ -57,4 +57,7 @@
     <string name="ok">OK</string>
     <string name="toast_modify_stop_succeed">Modify stop succeed!</string>
     <string name="toast_modify_stop_fail">Modify failed. No such stop.</string>
+    <string name="title_del_stop">Input the stop name to delete:</string>
+    <string name="toast_del_stop_succeed">Delete stop succeed.</string>
+    <string name="toast_del_stop_fail">Delete stop failed.</string>
 </resources>

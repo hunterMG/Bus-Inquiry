@@ -156,3 +156,32 @@ call transfer2('s1', 's9', @routeName1, @transStop1, @routeName2, @transStop2, @
 insert into `User` (`email`, `pswd`, `isAdmin`) VALUES('wml@1.com', MD5(MD5(11112222)), 1);
 
 ALTER TABLE `Stop` MODIFY COLUMN `StopName` VARCHAR(20) UNIQUE;
+
+DROP TRIGGER if EXISTS deleteStop;
+DELIMITER $
+CREATE TRIGGER deleteStop BEFORE DELETE on `Stop` for each row
+BEGIN
+DECLARE stopID1 int;
+DECLARE routeID1 int;
+DECLARE stopID2 int;
+DECLARE position2 int;
+DECLARE newPosition int DEFAULT 1;
+DECLARE s int default 0;
+DECLARE cursorRoute CURSOR FOR SELECT `StopID`,`Position` from `Route_Stop` where `RouteID` = routeID1 ORDER BY `Position` ASC;
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET s=1;  
+SELECT `StopID` into stopID1 from `Stop` where `StopName` = old.`StopName`;
+SELECT `RouteID` into routeID1 from `Route_Stop` where `StopID` = stopID1;
+DELETE from `Route_Stop` where `StopID` = stopID1;
+OPEN cursorRoute;
+FETCH cursorRoute into stopID2,position2;
+WHILE s <> 1 DO
+	UPDATE `Route_Stop` set `Position` = newPosition 
+		where `RouteID` = routeID1 and `StopID` = stopID2 
+				and `Position` = position2;
+	set newPosition = newPosition + 1;
+	FETCH cursorRoute into stopID2,position2;
+end WHILE;
+close cursorRoute;
+end
+$
+DELIMITER ;
