@@ -27,6 +27,9 @@ Avoid soft keyboard change the layout(EditText):
 [Volley](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0526/2934.html)  
 [Dialog](http://blog.csdn.net/chenlei1889/article/details/6267406)  
 [boundary](https://www.cnblogs.com/yue31313/p/7687058.html)  
+[TimePickerDialog](http://blog.csdn.net/qq_34475058/article/details/53940084)  
+[`true`/`false` which `onKey` returned](http://bbs.csdn.net/topics/380189477?page=1)  
+[imeActionId & imeOptions]()  
 ## MySQL
 [Procedure](https://www.cnblogs.com/chenpi/p/5136483.html)  
 [SELECT INTO](https://www.cnblogs.com/rooney/archive/2012/03/09/2387732.html)  

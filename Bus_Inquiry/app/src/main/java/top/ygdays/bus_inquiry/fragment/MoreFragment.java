@@ -2,6 +2,7 @@ package top.ygdays.bus_inquiry.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +48,7 @@ public class MoreFragment extends Fragment {
     private AlertDialog.Builder modifyStopDialog;
     private LinearLayout modifyStopLL;
     private Button btn_del_stop;
+    private Button btn_add_route;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -271,6 +273,19 @@ public class MoreFragment extends Fragment {
                         .setPositiveButton(R.string.ok, modifyStopDialogListener)
                         .setNegativeButton(R.string.cancel, null);
                 modifyStopDialog.show();
+            }
+        });
+
+        btn_add_route = (Button)view.findViewById(R.id.btn_add_route);
+        btn_add_route.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!Preference.isAdmin()) {
+                    Toast.makeText(mContext, R.string.toast_login_hint, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(mContext, AddRouteActivity.class);
+                startActivity(intent);
             }
         });
     }

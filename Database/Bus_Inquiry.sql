@@ -156,6 +156,7 @@ call transfer2('s1', 's9', @routeName1, @transStop1, @routeName2, @transStop2, @
 insert into `User` (`email`, `pswd`, `isAdmin`) VALUES('wml@1.com', MD5(MD5(11112222)), 1);
 
 ALTER TABLE `Stop` MODIFY COLUMN `StopName` VARCHAR(20) UNIQUE;
+ALTER TABLE `Route` MODIFY COLUMN `RouteName` VARCHAR(20) UNIQUE;
 
 DROP TRIGGER if EXISTS deleteStop;
 DELIMITER $
@@ -172,6 +173,7 @@ DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET s=1;
 SELECT `StopID` into stopID1 from `Stop` where `StopName` = old.`StopName`;
 SELECT `RouteID` into routeID1 from `Route_Stop` where `StopID` = stopID1;
 DELETE from `Route_Stop` where `StopID` = stopID1;
+UPDATE `Route` set `StopNum` = (`StopNum` - 1) where `RouteID` = routeID1;
 OPEN cursorRoute;
 FETCH cursorRoute into stopID2,position2;
 WHILE s <> 1 DO

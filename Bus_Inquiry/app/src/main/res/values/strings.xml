@@ -42,6 +42,8 @@
     <string name="toast_register_fail">Register failed! The user already exists.</string>
     <string name="btn_logout">Log out</string>
     <string name="toast_logout_success">You have logged out.</string>
+
+    <!-- Strings related to more -->
     <string name="btn_modify_stop">Modify stop</string>
     <string name="btn_add_stop">Add stop</string>
     <string name="btn_delete_stop">Delete stop</string>
@@ -60,4 +62,13 @@
     <string name="title_del_stop">Input the stop name to delete:</string>
     <string name="toast_del_stop_succeed">Delete stop succeed.</string>
     <string name="toast_del_stop_fail">Delete stop failed.</string>
+    <string name="btn_add_route">Add route</string>
+
+    <string name="prompt_price">Ticket Price (¥)</string>
+    <string name="prompt_starttime">Start time</string>
+    <string name="prompt_endtime">End time</string>
+    <string name="prompt_stopnum">The number of stops</string>
+    <string name="error_num_invalid">This number is invalid!</string>
+    <string name="toast_add_route_succeed">Add Route succeeded!</string>
+    <string name="toast_add_route_fail">Add Route failed!</string>
 </resources>
