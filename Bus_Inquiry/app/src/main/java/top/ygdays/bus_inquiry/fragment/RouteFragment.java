@@ -147,6 +147,7 @@ public class RouteFragment extends Fragment {
                     }else {
                         et_route.requestFocus();
                     }
+                    return true;
                 }
                 return false;
             }

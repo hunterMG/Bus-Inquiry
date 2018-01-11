@@ -143,6 +143,7 @@ public class StopFragment extends Fragment {
                 if(keyCode == KeyEvent.KEYCODE_ENTER){
                     Util.hideSoftKeyboard(view);
                     searchStop(view);
+                    return true;
                 }
                 return false;
             }

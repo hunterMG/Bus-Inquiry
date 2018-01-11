@@ -62,15 +62,17 @@ public class MainActivity extends AppCompatActivity implements TransferFragment.
         Preference.init(getApplicationContext());
 
         fragmentManager = getSupportFragmentManager();
-
-        Intent intent = getIntent();
-        String email = intent.getStringExtra("email");
-        if(email != null){
-            Log.i("intent", email);
-            setChoiceItem(3);
-        }else {
-            setChoiceItem(0);
-        }
+        setChoiceItem(0);
+//        Intent intent = getIntent();
+//        String email = intent.getStringExtra("email");
+//        if(email != null){
+//            Log.i("intent", email);
+//            BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.navigation);
+//            bottomNavigationView.getMenu().getItem(3).setChecked(true);
+//            setChoiceItem(3);
+//        }else {
+//            setChoiceItem(0);
+//        }
         //        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

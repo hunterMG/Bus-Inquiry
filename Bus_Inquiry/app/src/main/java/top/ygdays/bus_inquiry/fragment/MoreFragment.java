@@ -309,6 +309,20 @@ public class MoreFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        String email = Preference.getUserInfo();
+        tv_email.setText(email);
+        if(email.equals("null")){
+            btn_login.setVisibility(View.VISIBLE);
+            btn_logout.setVisibility(View.INVISIBLE);
+        }else {
+            btn_login.setVisibility(View.INVISIBLE);
+            btn_logout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
