@@ -11,7 +11,7 @@
     <string name="tv_route">Route:</string>
     <string name="et_start_hint">type your starting point here</string>
     <string name="et_end_hint">type your end point here</string>
-    <string name="et_route_hint">type route name here</string>
+    <string name="et_route_hint">route name</string>
     <string name="tv_stop">Stop:</string>
     <string name="ev_stop_hint">type stop name here</string>
     <string name="toast_route_succeed">Route query succeeded.</string>
@@ -71,4 +71,9 @@
     <string name="error_num_invalid">This number is invalid!</string>
     <string name="toast_add_route_succeed">Add Route succeeded!</string>
     <string name="toast_add_route_fail">Add Route failed!</string>
+
+    <string name="btn_modify_route">Modify route</string>
+    <string name="title_choose_route">Choose the route to modify:</string>
+    <string name="toast_modify_route_succeed">Modify route succeeded!</string>
+    <string name="toast_modify_route_fail">Modify route failed.</string>
 </resources>

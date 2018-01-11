@@ -43,9 +43,9 @@ function getStops($routeID, $mysqli){
 }
 
 $routeName = $_POST["routeName"];
-if($routeName == ""){
-    exit(0);
-}
+// if($routeName == ""){
+//     exit(0);
+// }
 // $routeName = "r1";
 require 'db.php';   //create a mysql connection--'$mysqli'
 $response = array();

@@ -154,4 +154,22 @@ public class Util {
             return "";
         }
     }
+    /*
+     * For ModifyRouteActivity getting the route info to display
+     */
+    private Route route;
+
+    public void setRoute(Route route){
+        this.route = route;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    private static final Util util = new Util();
+
+    public static Util getInstance(){
+        return util;
+    }
 }

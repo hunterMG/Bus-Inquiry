@@ -38,6 +38,9 @@
                 android:name=".AddRouteActivity"
                 android:label="@string/btn_add_route">
         </activity>
+        <activity android:name=".ModifyRouteActivity"
+                android:label="@string/btn_modify_route">
+        </activity>
     </application>
 
 </manifest>

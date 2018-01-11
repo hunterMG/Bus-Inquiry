@@ -21,9 +21,13 @@ import com.android.volley.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import top.ygdays.bus_inquiry.*;
+import top.ygdays.bus_inquiry.data.Route;
 import top.ygdays.bus_inquiry.net.AddStopRequest;
 import top.ygdays.bus_inquiry.net.DeleteStopRequest;
 import top.ygdays.bus_inquiry.net.ModifyStopRequest;
+import top.ygdays.bus_inquiry.net.RouteRequest;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +53,7 @@ public class MoreFragment extends Fragment {
     private LinearLayout modifyStopLL;
     private Button btn_del_stop;
     private Button btn_add_route;
+    private Button btn_modify_route;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -288,6 +293,43 @@ public class MoreFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        btn_modify_route = (Button)view.findViewById(R.id.btn_modify_route);
+        btn_modify_route.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!Preference.isAdmin()){
+                    Toast.makeText(mContext, R.string.toast_login_hint, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.i("route", response);
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean success = jsonResponse.getBoolean("success");
+                            if(success){
+                                int num_route = jsonResponse.getInt("num_route");
+                                if(num_route > 0){
+                                    List<Route> routeList = Util.getRouteList(jsonResponse);
+                                    showChooseRouteDialog(routeList);
+                                }else {
+                                    Toast.makeText(mContext, R.string.toast_0_route, Toast.LENGTH_LONG).show();
+                                }
+                            }else {
+                                Toast.makeText(mContext, R.string.toast_route_fail, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                };
+                RouteRequest routeRequest = new RouteRequest("", responseListener);// get all routes in database
+                MainActivity.requestQueue.add(routeRequest);
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -341,5 +383,31 @@ public class MoreFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void showChooseRouteDialog(final List<Route> routeList){
+        int len = routeList.size();
+        String[] routeNames = new String[ len ];
+        for(int i=0; i<len; i++){
+            routeNames[i] = routeList.get(i).RouteName;
+        }
+        modifyStopDialog =  new AlertDialog.Builder(mContext)
+                .setTitle(R.string.title_choose_route)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setSingleChoiceItems(routeNames, 0,
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Toast.makeText(mContext, routeList.get(which).RouteName, Toast.LENGTH_SHORT).show();
+                                Log.i("ChooseRoute", routeList.get(which).RouteName);
+                                Util.getInstance().setRoute(routeList.get(which));
+                                Intent intent = new Intent(mContext, ModifyRouteActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                )
+                .setNegativeButton(R.string.cancel, null);
+        modifyStopDialog.show();
     }
 }

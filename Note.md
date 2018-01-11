@@ -30,6 +30,7 @@ Avoid soft keyboard change the layout(EditText):
 [TimePickerDialog](http://blog.csdn.net/qq_34475058/article/details/53940084)  
 [`true`/`false` which `onKey` returned](http://bbs.csdn.net/topics/380189477?page=1)  
 [imeActionId & imeOptions]()  
+[Data among Activities](http://blog.csdn.net/rflyee/article/details/47431633)    
 ## MySQL
 [Procedure](https://www.cnblogs.com/chenpi/p/5136483.html)  
 [SELECT INTO](https://www.cnblogs.com/rooney/archive/2012/03/09/2387732.html)  
