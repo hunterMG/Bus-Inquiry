@@ -13,7 +13,7 @@ import java.util.Map;
  * @Date: Created in 下午1:14 2018/1/6
  */
 public class RegisterRequest extends StringRequest{
-    private static final String REGISTER_REQUEST_URL = "http://ygdays.top/bus_inquiry/register.php";
+    private static final String REGISTER_REQUEST_URL = "https://ygdays.top/bus_inquiry/register.php";
     private Map<String, String> params;
 
     public RegisterRequest(String email, String pswd, Response.Listener<String> listener) {

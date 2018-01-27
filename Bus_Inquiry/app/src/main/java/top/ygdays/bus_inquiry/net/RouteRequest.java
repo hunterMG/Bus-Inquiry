@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class RouteRequest extends StringRequest{
 
-    private static final String ROUTE_REQUEST_URL = "http://ygdays.top/bus_inquiry/queryRoute.php";
+    private static final String ROUTE_REQUEST_URL = "https://ygdays.top/bus_inquiry/queryRoute.php";
     private Map<String, String> params;
 
     public RouteRequest(String routeName, Response.Listener<String> listener) {

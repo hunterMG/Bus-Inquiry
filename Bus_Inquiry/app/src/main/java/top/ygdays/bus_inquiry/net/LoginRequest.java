@@ -13,7 +13,7 @@ import java.util.Map;
  * @Date: Created in 下午5:06 2018/1/5
  */
 public class LoginRequest extends StringRequest{
-    private static final String LOGIN_REQUEST_URL = "http://ygdays.top/bus_inquiry/login.php";
+    private static final String LOGIN_REQUEST_URL = "https://ygdays.top/bus_inquiry/login.php";
     private Map<String, String> params;
 
     public LoginRequest(String email, String pswd, Response.Listener<String> listener) {

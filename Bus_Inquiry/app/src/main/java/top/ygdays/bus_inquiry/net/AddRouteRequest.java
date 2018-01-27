@@ -12,7 +12,7 @@ import java.util.Map;
  * @Date: Created in 上午10:49 2018/1/10
  */
 public class AddRouteRequest extends StringRequest{
-    private static final String ADD_ROUTE_REQUEST_URL = "http://ygdays.top/bus_inquiry/addRoute.php";
+    private static final String ADD_ROUTE_REQUEST_URL = "https://ygdays.top/bus_inquiry/addRoute.php";
     private Map<String, String> params;
 
     public AddRouteRequest(String routeName, String price, String startTime, String endTime, String stopNum, Response.Listener<String> listener) {

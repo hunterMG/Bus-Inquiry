@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class TransferRequest extends StringRequest{
 
-    private static final String TRANSFER_REQUEST_URL = "http://ygdays.top/bus_inquiry/queryTransfer.php";
+    private static final String TRANSFER_REQUEST_URL = "https://ygdays.top/bus_inquiry/queryTransfer.php";
     private Map<String, String> params;
 
     public TransferRequest(String startStop, String endStop, Response.Listener<String> listener) {

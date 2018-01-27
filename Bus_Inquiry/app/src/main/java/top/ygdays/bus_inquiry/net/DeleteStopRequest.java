@@ -13,7 +13,7 @@ import java.util.Map;
  * @Date: Created in 下午1:18 2018/1/9
  */
 public class DeleteStopRequest extends StringRequest{
-    private static final String DELETE_STOP_REQUEST_URL = "http://ygdays.top/bus_inquiry/deleteStop.php";
+    private static final String DELETE_STOP_REQUEST_URL = "https://ygdays.top/bus_inquiry/deleteStop.php";
     private Map<String, String> params;
 
     public DeleteStopRequest(String stopName,  Response.Listener<String> listener) {

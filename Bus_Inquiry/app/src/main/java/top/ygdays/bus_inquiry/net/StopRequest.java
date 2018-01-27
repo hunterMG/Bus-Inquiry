@@ -12,7 +12,7 @@ import java.util.Map;
  * @Date: Created in 下午9:55 2018/1/1
  */
 public class StopRequest extends StringRequest{
-    private static final String STOP_REQUEST_URL = "http://ygdays.top/bus_inquiry/queryStop.php";
+    private static final String STOP_REQUEST_URL = "https://ygdays.top/bus_inquiry/queryStop.php";
     private Map<String, String> params;
 
     public StopRequest(String stopName, Response.Listener<String> listener) {
